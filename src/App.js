@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+
+import "./App.css";
+import Landing from "./pages/landing";
+import { Route, BrowserRouter } from "react-router-dom";
+import Home from "./pages/home";
+import { UserAuth } from "./hooks/auth";
+import { Authcontext } from "./context/auth-context";
 
 function App() {
+  const { userId, token, login, logout } = UserAuth();
+
+  let routes ;
+  if (token) {
+    routes = <Route path="/" exact component={Home} />;
+  } else {
+    routes = <Route path="/" exact component={Landing} />;
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Authcontext.Provider
+      value={{ userId: userId, token: token, login: login, logout: logout }}
+    >
+      <BrowserRouter>
+        {routes}
+      </BrowserRouter>
+    </Authcontext.Provider>
   );
 }
 
